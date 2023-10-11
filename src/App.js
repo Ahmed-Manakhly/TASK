@@ -1,4 +1,4 @@
-import {createBrowserRouter , RouterProvider  ,Link} from 'react-router-dom' ;
+import {createBrowserRouter , RouterProvider  ,Link, } from 'react-router-dom' ;
 import { useState } from "react";
 import "./style.scss";
 import "./media-query.css";
@@ -23,15 +23,18 @@ function App() {
   const getData = (data) => {
     setGetingData(data) ;
   }
+  //----- user
   //----------------------------------------ROUTES
   const router = createBrowserRouter([
-    {path: '/' , element : <RootLayout setActive={setActive} active={active} /> ,id:'root',loader: tokenLoader , errorElement : <NotFound/> ,children:[
+    {path: '/' , element :  <RootLayout setActive={setActive} active={active} /> ,id:'root',loader: tokenLoader , errorElement : <NotFound/> ,children:[
       {index : true , element : <Home setActive={setActive} liftData={getData}   /> ,id:'data' , loader : articlesLoader} ,
       {path : 'detail/:articleID' , element : <Detail getingData={getingData} />},
-      {path : 'create' , element : <AddEditArticle   /> , action :manipulateEventAction },
+      {path : 'create' , element : <AddEditArticle   />, action :manipulateEventAction },
       {path : 'update/:articleID' , element : <AddEditArticle  getingData={getingData}/> , action :manipulateEventAction},
-      {path : 'auth' , element : <Auth setActive={setActive} /> , action : authAction , errorElement :
-      <Link className='category catg-color m-3' to='/'><h1>invalid user name or password!</h1></Link>},
+      {path : 'auth' , element : <Auth setActive={setActive} /> ,
+      action : authAction , errorElement : <div className="alert alert-danger" role="alert">
+        invalid user name or password!
+      <Link className='alert-link' to='/' >  kindly click here</Link></div>},
       {path : 'logout', action: logoutAction},
       {path : 'delete', action: deleteAction},
       {path : 'activate', action: actionActivateHandler},

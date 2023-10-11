@@ -9,8 +9,8 @@ const Header = ({ active, setActive}) => {
     //----------------------------------
     
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <div className="container-fluid bg-faded padding-media">
+        <nav className="navbar navbar-expand-lg sticky-top" style={{backgroundColor : '#ccc'}}>
+            <div className="container-fluid bg-faded padding-media  " style={{backgroundColor : '#ccc'}}>
                 <div className="container padding-media">
                     <nav className="navbar navbar-toggleable-md navbar-light">
                         <button className="navbar-toggler mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"

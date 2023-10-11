@@ -16,6 +16,7 @@ const BlogSection = ({
   listHander,
   ActivateHandler,
   DeactivateHandler,
+  isActive
 }) => {
   //----------------------------------
   const roleName  =localStorage.getItem('RoleName') ;
@@ -26,7 +27,10 @@ const BlogSection = ({
         <div className="col-md-5">
           <div className="hover-blogs-img">
             <div className="blogs-img">
-              <img src={imgUrl} alt={title} />
+              <img src={imgUrl} alt={title} style={{
+                '-webkit-filter': !isActive? 'grayscale(100%)': null,
+                filter: !isActive? 'grayscale(100%)': null,
+              }}/>
             </div>
           </div>
         </div>
