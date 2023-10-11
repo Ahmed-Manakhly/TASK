@@ -1,16 +1,7 @@
-// import {useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const FeatureBlogs = ({ blogs, title ,BToAHandler, AToBHandler }) => {
   const navigate = useNavigate();
-  // const [sortedBlogs , setSortedBlogs] = useState(blogs) ;
-  // const BToAHandler = () =>{setSortedBlogs(prev => prev.sort(function(a,b){return new Date(b.date) - new Date(a.date);}))}
-  // const AToBHandler = () =>{setSortedBlogs(prev => prev.sort(function(a,b){return new Date(a.date) - new Date(b.date);}))}
-  // console.log(sortedBlogs);
-  // useEffect(() => {
-  //   setSortedBlogs(blogs)
-  // }, [blogs]);
-  // console.log(new Date(blogs[0].date) - new Date(blogs[1].date))
   return (
     <div>
       <div className="blog-heading text-start pt-3 py-2 mb-4">{title}</div>

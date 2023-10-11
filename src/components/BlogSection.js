@@ -1,8 +1,8 @@
-// import React, { useEffect } from "react";
 import FontAwesome from "react-fontawesome";
 import { Link } from "react-router-dom";
 import { excerpt } from "../utility";
 
+//----------------------------------
 const BlogSection = ({
   id,
   title,
@@ -13,12 +13,13 @@ const BlogSection = ({
   writerName,
   date,
   handleDelete,
-  user,
   listHander,
   ActivateHandler,
   DeactivateHandler,
-
 }) => {
+  //----------------------------------
+  const roleName  =localStorage.getItem('RoleName') ;
+  const theId  = +(localStorage.getItem('userId')); 
   return (
     <div>
       <div className="row pb-4" key={id}>
@@ -42,26 +43,26 @@ const BlogSection = ({
             {excerpt(body, 120)}
           </div>
           <Link to={`/detail/${id}`}>
-            <button className="btn btn-read">Read More</button>
+            <button className="btn btn-read ">Read More</button>
           </Link>
-          {user && user?.LoginUser?.Id === userId && (
             <div style={{ float: "right" }}>
-              <FontAwesome
-                name="trash"
-                style={{ margin: "15px", cursor: "pointer" }}
-                size="2x"
-                onClick={() => handleDelete(id)}
-              />
-              <Link to={`/update/${id}`}>
+              { (theId === userId || roleName === "SuperAdmin")&& (
                 <FontAwesome
-                  name="edit"
-                  style={{ cursor: "pointer" }}
+                  name="trash"
+                  style={{ margin: "15px", cursor: "pointer" }}
                   size="2x"
-                />
-              </Link>
+                  onClick={() => handleDelete(id)}
+                />)}{ theId === userId && (
+                <Link to={`/update/${id}`}>
+                  <FontAwesome
+                    name="edit"
+                    style={{ cursor: "pointer" }}
+                    size="2x"
+                  />
+                </Link>
+              )}
             </div>
-          )}
-          {user && user?.LoginUser?.RoleName === "SuperAdmin"&& (<>
+          {roleName === "SuperAdmin"&& (<>
             <button className="category catg-color m-3 " onClick={ActivateHandler}>Activate</button>
             <button className="category catg-color" onClick={DeactivateHandler}>Deactivate</button>
             </>)}
@@ -77,5 +78,5 @@ const BlogSection = ({
     </div>
   );
 };
-
+//----------------------------------
 export default BlogSection;

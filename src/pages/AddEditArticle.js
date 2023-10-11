@@ -1,121 +1,33 @@
-import React, { useState } from "react";
-// import React, { useState, useEffect } from "react";
-// // import ReactTagInput from "@pathofdev/react-tag-input";
-// // import "@pathofdev/react-tag-input/build/index.css";
-import {  useParams , useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-//----------------------------
+import {categoryOption as cats} from '../utility/img'
+import { useNavigate , Form ,useNavigation , useActionData  , redirect , useParams } from 'react-router-dom';
 
-const initialState = {
-  title: "",
-  body: "",
-  categoryId: 0,
-};
-//------------------------------------
-const categoryOption = [
-  {
-    "id": 3,
-    "name": "Computers, Science & Technology",
-  },
-  {
-    "id": 4,
-    "name": "Entertainment, Art & Culture",
-  },
-  {
-    "id": 5,
-    "name": "General News & Current Affairs",
-  },
-  {
-    "id": 6,
-    "name": "Health & Medicine",
-  },
-  {
-    "id": 7,
-    "name": "Lifestyle",
-  },
-  {
-    "id": 8,
-    "name": "Multicultural Press",
-  },
-  {
-    "id": 9,
-    "name": "New Zealand",
-  },
-  {
-    "id": 10,
-    "name": "Sport & Leisure",
-  },
-  {
-    "id": 11,
-    "name": "Trade & Professional",
-  },
-  {
-    "id": 14,
-    "name": "Business, Finance & Economics\r\n",
-  }
-]
-//----------------------------------
-const AddEditArticle = ({ user, setActive , setArticlesUpdated }) => {
-  //----------------------- FORM STATES
-  const [form, setForm] = useState(initialState);
-  const { title, body,categoryId } = form;
-  let forIsValid = false
-  // const [file, setFile] = useState(null);
-  //------------------------ to update
+const categoryOption = cats ;
+
+
+const AddEditArticle = ({getingData}) => {
+  //------------------------ get article id
+  let thisArticle 
   const { articleID } = useParams();
-  const navigate = useNavigate();
-  //------------------ article DATA
-  const articleSchema = {
-    id: articleID? articleID :0,
-    title: "",
-    body: "",
-    date: new Date().toISOString(),
-    userId: user?.LoginUser.Id,
-    categoryId: 0,
-    isActive: true,
-    categoryName: "",
-    writerName: user?.LoginUser.DisplayName ,
+  //----------------------------------
+  if(getingData){
+    thisArticle = getingData?.find(a => +a.id === +articleID) 
+  }else{
+    thisArticle = null
   }
-  // RoleId
-  //---------------------------------- HANDLERS
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-  //------ change cat
-  const onCategoryChange = (e) => {
-    setForm({ ...form, categoryId: e.target.value });
-  };
-  //------------------------ add or update
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (categoryId && title && body ) {
-      forIsValid = true
-      const data = {
-        ...articleSchema,
-        categoryId : categoryId,
-        title : title,
-        body : body
-      }
-      try {
-        const response = await fetch('https://51.81.20.148:7373/Article/AddUpdateArticle',
-          {method : 'POST' , headers : {'Content-Type' : 'application/json'} , body : JSON.stringify(data)})
-        setArticlesUpdated(true);
-        if(!response.ok){return toast.error('Invalid Data!')}else{
-          toast.success(`Article ${articleID?'updated' : 'created'} successfully`);
-        }
-        setArticlesUpdated(true);
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      return toast.error("All fields are mandatory to fill");
-    }
-    navigate("/");
-    setActive("home");
-  };
+  //------------------------------------------------
+  const navigate = useNavigate();
+  //---------------------------------------
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === 'submitting' ;
+  const data = useActionData() ;
+  //-----------------------------------------
+  function cancelHandler() {
+    navigate('..');
+  }
   //-----------------------------------
   return (
+    
     <div className="container-fluid mb-4">
       <div className="container">
         <div className="col-12">
@@ -125,22 +37,26 @@ const AddEditArticle = ({ user, setActive , setArticlesUpdated }) => {
         </div>
         <div className="row h-100 justify-content-center align-items-center">
           <div className="col-10 col-md-8 col-lg-6">
-            <form className="row blog-form" onSubmit={handleSubmit}>
+            <Form className="row blog-form" method='post' >
+              {data && data.errors && (<ul>{Object.values(data.errors).map(err => <li key={err}>{err}</li>)}</ul>)}
               <div className="col-12 py-3">
-                  <input type="text"className="form-control input-text-box"placeholder="Title"name="title"value={title}onChange={handleChange}/>
+                  <input type="text"className="form-control input-text-box"placeholder="Title"name="title" 
+                  required  defaultValue={thisArticle? thisArticle.title : ''}/>
               </div>
               <div className="col-12 py-3">
-                <select value={categoryId}onChange={onCategoryChange}className="catg-dropdown">
+                <select  name='category' className="catg-dropdown" required  defaultValue={thisArticle? thisArticle.categoryId : ''}>
                   <option>Please select category</option>{categoryOption.map((option, index) =>(<option value={option.id || ""} key={index}>{option.name}</option>))}
                 </select>
               </div>
               <div className="col-12 py-3">
-                <textarea className="form-control description-box" placeholder="Description" value={body} name="body" onChange={handleChange} />  
+                <textarea className="form-control description-box" placeholder="Description" name="body"
+                required  defaultValue={thisArticle? thisArticle.body : ''}/>  
               </div>
               <div className="col-12 py-3 text-center">
-                <button className="btn btn-add" type="submit"disabled={forIsValid}>{articleID ? "Update" : "Submit"}</button>
+                <button type="button" onClick={cancelHandler} disabled={isSubmitting} className="btn btn-add m-5"> Cancel </button>
+                <button className="btn btn-add" type="submit"disabled={isSubmitting}>{isSubmitting?'submitting...':(articleID ? "Update" : "Submit")}</button>
               </div>
-            </form>
+            </Form>
           </div>
         </div>
       </div>
@@ -149,3 +65,33 @@ const AddEditArticle = ({ user, setActive , setArticlesUpdated }) => {
 }
 
 export default AddEditArticle
+  //----------------------------------------------
+
+  export const action = async ({request , params})=>{
+
+    const displayName  =localStorage.getItem('DisplayName');
+    const userId  =localStorage.getItem('userId');
+    //------------------------------------------
+    const data = await request.formData();
+    //---------------------------------------
+    const articleSchema = {
+      id: params.articleID ? params.articleID :0,
+      title: data.get('title'),
+      body: data.get('body'),
+      date: new Date().toISOString(),
+      userId: userId,
+      categoryId: data.get('category'),
+      isActive: true,
+      categoryName: "",
+      writerName: displayName,
+    }
+    //--------------------------------------
+    const response = await fetch('https://51.81.20.148:7373/Article/AddUpdateArticle',
+      {method : 'POST' , headers : {'Content-Type' : 'application/json'} , body : JSON.stringify(articleSchema)})
+      console.log(response.status)
+      console.log(articleSchema)
+      if(!response.ok){return toast.error('Invalid Data!')}else{
+        toast.success(`Article ${params.articleID ?'updated' : 'created'} successfully`);
+      }
+    return redirect('/');
+  } ;

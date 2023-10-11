@@ -1,25 +1,18 @@
 import {useState} from "react";
-// import { useNavigate } from "react-router-dom";
+
 
 const Search = ({ SubmitHandler }) => {
-  // const navigate = useNavigate();
-
+  //----------------------------------
   const [val, setVal] = useState() ;
-
   const handleChange = (e)=>{
     setVal(e.target.value)
   }
-
+  //----------------------------------
   const handleSubmit = (e) => {
     e.preventDefault();
-    // if (search) {
-    //   navigate(`/search?searchQuery=${search}`);
-    // } else {
-    //   navigate("/");
-    // }
     SubmitHandler(val) ;
   };
-
+  //----------------------------------
   return (
     <div>
       <div className="blog-heading text-start py-2 mb-4">Search</div>
